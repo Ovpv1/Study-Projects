@@ -24,7 +24,7 @@ if(prosseguir == 'N'):
 else:
     
     #O bingo em si inicia aqui
-     while(len(sorteado_na_cartela) < 5):
+     while(len(sorteado_na_cartela) < len(suaCartela)):
 
           sorteio = random.randint(1,10)
 
@@ -42,14 +42,14 @@ else:
 
 
           #Aqui vão alguns avisos para alertar o jogador sobre quantos números faltam.
-          if(len(sorteado_na_cartela) == 3):
+          if(len(sorteado_na_cartela) == len(suaCartela) - 2):
                print(f'Faltam mais 2 números!')
-          elif(len(sorteado_na_cartela) == 4):
+          elif(len(sorteado_na_cartela) == len(suaCartela) - 1):
                print(f'FALTA SÓ MAIS 1 NÚMERO!')
 
 
           #Verifica se a cartela foi preenchida ou não
-          if(len(sorteado_na_cartela) == 5):
+          if(len(sorteado_na_cartela) == len(suaCartela)):
                print('\n \n BINGO! Você bateu! \n \n')
                break
           
