@@ -1,32 +1,36 @@
-const entregas = []
+//const prompt = require('prompt-sync')();
 
-function calcularTaxaPeso(peso){
-    if(peso <= 5){
-        return 0
+function calcularTaxaPeso(entrega){
+    if(entrega.peso <= 5){
+            return 0
     } else{
-        let excedente = peso - 5
+        let excedente = entrega.peso - 5
         return excedente*2.5
     }
+    
 }
 
-function calcularTaxaBairro(bairro,valorFinal){
-    if (bairro == 'n'){
-        return valorFinal*1
+function calcularTaxaBairro(entrega){
+    if (entrega.bairro == 'Registrado'){
+        return 1.1
     } else{
-        return valorFinal*1.1
-    }
+        return 1
+    } 
 }
 
-function calcularPrecoDistancia(distancia,veiculo){
-    if (veiculo == 'bicicleta'){
-        return distancia*1.2
+
+function calcularPrecoDistancia(entrega){
+    let precoDistancia = 0
+    if(entrega.veiculo == 'bicicleta'){
+        precoDistancia = entrega.distancia*1.2
     } else{
-        return distancia*1.8
+        precoDistancia = entrega.distancia*1.8
     }
+    return precoDistancia
 }
 
-function taxaChuva(clima){
-    if(clima == 'chuva'){
+function taxaChuva(entrega){
+    if(entrega.clima == 'chuva'){
         return 3
     } else{
         return 0
@@ -34,28 +38,63 @@ function taxaChuva(clima){
 }
 
 function valorEntregasTotal(entregas){
-    let total = 0
+    let totalEntrega = 0
+    let valorFixo = 5
     for(let i = 0; i<entregas.length; i++){
-        let entrega = entregas[i]
-        let total = (5 + calcularPrecoDistancia(entrega.distancia) + taxaChuva(entrega.clima) + calcularTaxaPeso(entrega.peso))*calcularTaxaBairro(entrega.bairro)
+        let precoDistancia = calcularPrecoDistancia(entregas[i])
+        let precoChuva = taxaChuva(entregas[i])
+        let precoPeso = calcularTaxaPeso(entregas[i])
+        let taxaBairro = calcularTaxaBairro(entregas[i])
+
+        totalEntrega += (valorFixo + precoDistancia + precoChuva + precoPeso)*taxaBairro
+    }
+
+    return totalEntrega
+}
+
+function numEntregas(entregas){
+    return entregas.length
+}
+
+function distanciaTotal(entregas){
+    let somaDistancia = 0
+    for(let i = 0; i<entregas.length; i++){
+        somaDistancia += entregas[i].distancia
+    }
+    return somaDistancia
+}
+
+function recebeBonus(entregas){
+    if (numEntregas(entregas) > 8 || distanciaTotal(entregas) > 40){
+        return true
+    } else{
+        return false
+    }
+}
+
+function pagamentoTotal(entregas){
+    let total = valorEntregasTotal(entregas)
+    if(recebeBonus(entregas) == true){
+        return total + 25
     }
     return total
 }
 
 
-
+const entregas = []
 
 for(let i = 1; i<=10; i++){
-    let numEntrega = 'ID:'+ i //Faz o cadastro do número da entrega
+    let IdEntrega = 'ID:'+ i //Faz o cadastro do número da entrega
     let veiculo
     let peso
     let clima
     let trajetoDificultoso
     let distancia
+    console.log(`\n--------Entrega N° ${i}--------`)
 
     //Recebe o dado da distância da entrega
     while(true){
-        distancia = parseFloat(prompt('Qual a distância da entrega? ')).toFixed(1)
+        distancia = parseFloat(prompt('\nQual a distância da entrega? '))
         if(isNaN(distancia) || distancia <= 0){
             console.log('Digite um valor válido.\n')
         } else{
@@ -114,13 +153,18 @@ for(let i = 1; i<=10; i++){
         }
     }
 
-
+    if(trajetoDificultoso == 's'){
+        trajetoDificultoso = 'Registrado'
+    } else{
+        trajetoDificultoso = 'Não registrado.'
+    }
     const dados = {
-        cadastro: numEntrega,
+        cadastro: IdEntrega,
         distancia: distancia,
         veiculo: veiculo,
         peso: peso,
-        clima: clima
+        clima: clima,
+        bairro: trajetoDificultoso
     }
 
     entregas.push(dados)
@@ -140,3 +184,13 @@ for(let i = 1; i<=10; i++){
     }
 }
 
+let numeroEntregas = numEntregas(entregas)
+let distanciaPercorrida = distanciaTotal(entregas)
+let bonus = recebeBonus(entregas)
+let pagamentoFinal = pagamentoTotal(entregas)
+
+console.log('\n--------RELATÓRIO FINAL--------')
+console.log(`\nO número de entregas foi/foram: ${numeroEntregas} entrega(s)`)
+console.log(`A distância total percorrida foi de ${distanciaPercorrida.toFixed(1)}km`)
+console.log(`Situação do bônus: ${bonus}`)
+console.log(`O valor final a ser repassado para o entregador é de R$${pagamentoFinal.toFixed(2)}`)
