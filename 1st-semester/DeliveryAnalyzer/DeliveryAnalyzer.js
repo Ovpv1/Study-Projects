@@ -1,13 +1,25 @@
 //const prompt = require('prompt-sync')();
 
+class Entrega{
+    constructor(cadastro, distancia, veiculo, peso, clima, bairro){
+        this.cadastro = cadastro
+        this.distancia = distancia
+        this.veiculo = veiculo
+        this.peso = peso
+        this.clima = clima
+        this.bairro = bairro
+    }
+}
+
+
+//Funções para calcular as taxas e valores da lista de entregas
 function calcularTaxaPeso(entrega){
     if(entrega.peso <= 5){
-            return 0
+        return 0
     } else{
         let excedente = entrega.peso - 5
         return excedente*2.5
     }
-    
 }
 
 function calcularTaxaBairro(entrega){
@@ -17,7 +29,6 @@ function calcularTaxaBairro(entrega){
         return 1
     } 
 }
-
 
 function calcularPrecoDistancia(entrega){
     let precoDistancia = 0
@@ -48,10 +59,9 @@ function valorEntregasTotal(entregas){
 
         totalEntrega += (valorFixo + precoDistancia + precoChuva + precoPeso)*taxaBairro
     }
-
     return totalEntrega
 }
-
+    
 function numEntregas(entregas){
     return entregas.length
 }
@@ -65,11 +75,7 @@ function distanciaTotal(entregas){
 }
 
 function recebeBonus(entregas){
-    if (numEntregas(entregas) > 8 || distanciaTotal(entregas) > 40){
-        return true
-    } else{
-        return false
-    }
+    return numEntregas(entregas) > 8 || distanciaTotal(entregas) > 40
 }
 
 function pagamentoTotal(entregas){
@@ -158,16 +164,8 @@ for(let i = 1; i<=10; i++){
     } else{
         trajetoDificultoso = 'Não registrado.'
     }
-    const dados = {
-        cadastro: IdEntrega,
-        distancia: distancia,
-        veiculo: veiculo,
-        peso: peso,
-        clima: clima,
-        bairro: trajetoDificultoso
-    }
 
-    entregas.push(dados)
+    entregas.push(new Entrega(IdEntrega, distancia, veiculo, peso, clima, trajetoDificultoso))
 
     let adicionarEntrega
     while(true){
